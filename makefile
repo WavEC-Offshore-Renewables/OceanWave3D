@@ -66,12 +66,14 @@ OBJECTSBUILDDIR = $(addprefix $(BUILDDIR)/,$(OBJECTSNODIR))
 
 # default target creates directory
 default:
-	-@mkdir -p -v $(BUILDDIR)
 	@echo "To install OceanWave3D type 'make Debug|Release'"
 
 # Targets for linking
 Release: FFLAGS = $(OPTFLAGS)
 Release: $(OBJECTSBUILDDIR)
+	-@mkdir -p -v $(BUILDDIR)
+	-@mkdir -p -v $(INSTALLDIR)
+	-@mkdir -p -v $(LIBINSTALLDIR)
 	@if ls *.mod &> /dev/null; then \
 	mv -v ./*.mod $(BUILDDIR); \
 	cp -v ./thirdpartylibs/LIB_VTK_IO/static/lib_vtk_io.mod $(BUILDDIR); \
@@ -83,6 +85,9 @@ Release: $(OBJECTSBUILDDIR)
 
 Debug: FFLAGS = $(DBFLAGS)
 Debug: $(OBJECTSBUILDDIR) 
+	-@mkdir -p -v $(BUILDDIR)
+	-@mkdir -p -v $(INSTALLDIR)
+	-@mkdir -p -v $(LIBINSTALLDIR)
 	@if ls *.mod &> /dev/null; then \
 	mv -v *.mod $(BUILDDIR); \
 	cp -v thirdpartylibs/LIB_VTK_IO/static/lib_vtk_io.mod $(BUILDDIR); \
