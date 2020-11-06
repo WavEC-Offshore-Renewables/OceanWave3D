@@ -38,7 +38,7 @@ ELSE
 	SELECT CASE (GridX)
 		CASE (0) ! Even Grid
 			DO i = -GhostGridX,Nx-1+GhostGridX
-			   x(i+1+GhostGridX,1:Ny+2*GhostGridY) = REAL(i,long)/REAL((Nx-1),long)*Lx;
+			  x(i+1+GhostGridX,1:Ny+2*GhostGridY) = REAL(i,long)/REAL((Nx-1),long)*Lx;
 			END DO
 		CASE DEFAULT
 			PRINT *,'Error: Specified grid for x-direction invalid.'
@@ -66,7 +66,7 @@ SELECT CASE (GridZ)
 		END DO
 	CASE (1) ! Uneven Grid
 		DO i = 0,Nz-1
-			z(i+1+GhostGridZ) = SIN(pi*REAL(i,long)/REAL(2*(Nz-1),long))
+			z(i+1+GhostGridZ) = SIN(pi*REAL(i,long)/REAL(2*(Nz-1),long))*Lz;
 		END DO
 	CASE DEFAULT
 		PRINT *,'Error: Specified grid for z-direction invalid.'
