@@ -14,6 +14,8 @@ SUBROUTINE ReadInputFileParameters
   REAL(kind=long) :: xtankIC, ytankIC, t0IC, Tp, Hs, h0, kh_max, seed, seed2, x0, &
        y0, beta0, s0
   CHARACTER(len=30):: inc_wave_file
+	REAL(kind=long) :: xbeg, xend, ybeg, yend
+
 
   READ (FILEIP(1),'(A)',ERR=100,IOSTAT=ios) HEAD(1)
   WRITE (*,FMT='(A,A/)') '   Input file with model parameters : ', filenameINPUT
@@ -251,8 +253,21 @@ SUBROUTINE ReadInputFileParameters
      print *, 'Kinematics output requested in ',nOutFiles,' file(s) named "Kinematics_**.bin".'
      print *, ' '
      Do i=1,nOutFiles
-        READ (FILEIP(1),*,err=110)Output(i)%xbeg,Output(i)%xend,Output(i)%xstride,Output(i)%ybeg, &
-             Output(i)%yend,Output(i)%ystride,Output(i)%tbeg,Output(i)%tend,Output(i)%tstride
+        READ (FILEIP(1),*,err=110) xbeg,&
+                                   xend, &
+                                   Output(i)%xstride,&
+                                   ybeg, &
+                                   yend, &
+                                   Output(i)%ystride,&
+                                   Output(i)%tbeg, &
+                                   Output(i)%tend,&
+                                   Output(i)%tstride
+
+        Output(i)%xbeg = Floor(xbeg * FineGrid%Nx/Lx + 0.5)
+        Output(i)%xend = Floor(xend * FineGrid%Nx/Lx + 0.5)
+        Output(i)%ybeg = Floor(ybeg * FineGrid%Ny/Ly + 0.5)
+        Output(i)%yend = Floor(yend * FineGrid%Ny/Ly + 0.5)
+    
         !
         ! Check that the requested output ranges exist on this grid.
         !
@@ -272,6 +287,7 @@ SUBROUTINE ReadInputFileParameters
         OPEN (UNIT=FILEOP(i+1),FILE='Kinematics'//fnt(i)//'.bin',          &
              STATUS='UNKNOWN',FORM='UNFORMATTED',ACCESS='SEQUENTIAL')
      END Do
+
   ELSE
      iKinematics=0
   END IF
