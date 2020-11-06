@@ -1,0 +1,6 @@
+build/*
+doc/doxygen/html/*
+install/*
+lib/*
+test/*
+thirdpartylibs/SPARSKIT2/*
