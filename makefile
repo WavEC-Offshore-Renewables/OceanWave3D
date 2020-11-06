@@ -71,7 +71,6 @@ default:
 # Targets for linking
 Release: FFLAGS = $(OPTFLAGS)
 Release: $(OBJECTSBUILDDIR)
-	-@mkdir -p -v $(BUILDDIR)
 	-@mkdir -p -v $(INSTALLDIR)
 	-@mkdir -p -v $(LIBINSTALLDIR)
 	@if ls *.mod &> /dev/null; then \
@@ -85,7 +84,6 @@ Release: $(OBJECTSBUILDDIR)
 
 Debug: FFLAGS = $(DBFLAGS)
 Debug: $(OBJECTSBUILDDIR) 
-	-@mkdir -p -v $(BUILDDIR)
 	-@mkdir -p -v $(INSTALLDIR)
 	-@mkdir -p -v $(LIBINSTALLDIR)
 	@if ls *.mod &> /dev/null; then \
@@ -131,9 +129,11 @@ clean:
 
 # Generic compilation rules
 $(BUILDDIR)/%.o: %.f 
+	@mkdir -p $(@D)
 	$(FC) $(FFLAGS) -c $< -o $@ $(INCLUDEDIRS)
 
 $(BUILDDIR)/%.o: %.f90
+	@mkdir -p $(@D)
 	@if ls *.mod &> /dev/null; then \
 	mv -v *.mod $(BUILDDIR); \
 	cp -v thirdpartylibs/LIB_VTK_IO/static/lib_vtk_io.mod $(BUILDDIR); \
@@ -141,7 +141,9 @@ $(BUILDDIR)/%.o: %.f90
 	$(FC) $(FFLAGS) -c $< -o $@ $(INCLUDEDIRS)
 
 $(BUILDDIR)/%.mod: %.f
+	@mkdir -p $(@D)
 	$(FC) $(FFLAGS) -c $< -o $@ $(INCLUDEDIRS)
 
 $(BUILDDIR)/%.mod: %.f90
+	@mkdir -p $(@D)
 	$(FC) $(FFLAGS) -c $< -o $@ $(INCLUDEDIRS)
