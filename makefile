@@ -78,7 +78,7 @@ Release: $(OBJECTSBUILDDIR)
 	fi
 	@echo "*** Starting linking of files for OceanWave3D (Release)... ***"
 	@$(FC) $(FFLAGS) -o $(INSTALLDIR)/$(PROGNAME) $(OBJECTSBUILDDIR) $(LIBDIRS) $(LINLIB) $(INCLUDEDIRS) 	
-	ar -cr ~/lib/libOceanWave3DBuild.a $(BUILDDIR)/*.o
+	ar -cr $(LIBINSTALLDIR)/libOceanWave3DBuild.a $(BUILDDIR)/*.o
 	@echo "OceanWave3D has been built successfully."
 
 Debug: FFLAGS = $(DBFLAGS)
@@ -89,7 +89,7 @@ Debug: $(OBJECTSBUILDDIR)
 	fi
 	@echo "*** Starting linking of files for OceanWave3D (Debug)... ***"
 	$(FC) $(FFLAGS) -o $(INSTALLDIR)/$(PROGNAME) $(OBJECTSBUILDDIR) $(LIBDIRS) $(LINLIB) $(INCLUDEDIRS) 	
-	ar -cr ~/lib/libOceanWave3DBuild.a $(BUILDDIR)/*.o
+	ar -cr $(LIBINSTALLDIR)/libOceanWave3DBuild.a $(BUILDDIR)/*.o
 	@echo "OceanWave3D Debug has been built successfully."
 
 all: Release
