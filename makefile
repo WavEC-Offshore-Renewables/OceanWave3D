@@ -6,6 +6,7 @@
 include common.mk
 
 .SUFFIXES: .f90 .f
+.PHONY: Debug Release all clean executable
 
 # Source files
 # subdirectories - complete directory-tree should be included
@@ -60,40 +61,38 @@ OBJECTS := $(OBJECTS:.f90=.o)
 OBJECTSNODIR = $(notdir $(OBJECTS))
 OBJECTSBUILDDIR = $(addprefix $(BUILDDIR)/,$(OBJECTSNODIR))
 
+# Third party libraries
+THIRDPARTY := ThirdParty/SPARSKIT2
+LIBRARIES := libskit.a
+
+#
+#
 #
 #test: $(OBJECTSBUILDDIR)
 #	@echo $(OBJECTSBUILDDIR)
 
-# default target creates directory
+# default target
 default:
 	@echo "To install OceanWave3D type 'make Debug|Release'"
 
 # Targets for linking
 Release: FFLAGS = $(OPTFLAGS)
-Release: $(OBJECTSBUILDDIR)
+Release: executable
+
+Debug: FFLAGS = $(DBFLAGS)
+Debug: executable
+
+executable:	$(addprefix $(LIBDIR)/, $(LIBRARIES)) $(OBJECTSBUILDDIR)
 	-@mkdir -p -v $(INSTALLDIR)
 	-@mkdir -p -v $(LIBINSTALLDIR)
 	@if ls *.mod &> /dev/null; then \
 	mv -v ./*.mod $(BUILDDIR); \
 	cp -v ./thirdpartylibs/LIB_VTK_IO/static/lib_vtk_io.mod $(BUILDDIR); \
 	fi
-	@echo "*** Starting linking of files for OceanWave3D (Release)... ***"
+	@echo "*** Starting linking of files for OceanWave3D ... ***"
 	@$(FC) $(FFLAGS) -o $(INSTALLDIR)/$(PROGNAME) $(OBJECTSBUILDDIR) $(LIBDIRS) $(LINLIB) $(INCLUDEDIRS) 	
 	ar -cr $(LIBINSTALLDIR)/libOceanWave3DBuild.a $(BUILDDIR)/*.o
 	@echo "OceanWave3D has been built successfully."
-
-Debug: FFLAGS = $(DBFLAGS)
-Debug: $(OBJECTSBUILDDIR) 
-	-@mkdir -p -v $(INSTALLDIR)
-	-@mkdir -p -v $(LIBINSTALLDIR)
-	@if ls *.mod &> /dev/null; then \
-	mv -v *.mod $(BUILDDIR); \
-	cp -v thirdpartylibs/LIB_VTK_IO/static/lib_vtk_io.mod $(BUILDDIR); \
-	fi
-	@echo "*** Starting linking of files for OceanWave3D (Debug)... ***"
-	$(FC) $(FFLAGS) -o $(INSTALLDIR)/$(PROGNAME) $(OBJECTSBUILDDIR) $(LIBDIRS) $(LINLIB) $(INCLUDEDIRS) 	
-	ar -cr $(LIBINSTALLDIR)/libOceanWave3DBuild.a $(BUILDDIR)/*.o
-	@echo "OceanWave3D Debug has been built successfully."
 
 all: Release
 
@@ -107,14 +106,21 @@ shared: $(OBJECTSBUILDDIR)
 	@$(FC) $(FFLAGS) -o $(FOAM_USER_LIBBIN)/$(LIBNAME) $(OBJECTSBUILDDIR) $(LIBDIRS) $(LINLIB) $(INCLUDEDIRS) 	
 	@echo "Shared library for OceanWave3D has been built successfully."
 
+$(THIRDPARTY):
+	$(MAKE) -C $(dir $@)
+
+$(LIBDIR)/%.a: $(THIRDPARTY)
+	ln -s ../$(THIRDPARTY)/$(notdir $@) $(LIBDIR)/
 
 # Compile only - compile all source file to build directory
 compile: $(OBJECTSBUILDDIR)
 
 clean:
-	rm -f $(BUILDDIR)/*.o 
-	rm -f $(BUILDDIR)/*.mod 
-	rm -f $(INSTALLDIR)/$(PROGNAME)
+	$(MAKE) -C ThirdParty clean
+	rm $(LIBDIR)/*.a
+	rm $(BUILDDIR)/*.o 
+	rm $(BUILDDIR)/*.mod 
+	rm $(INSTALLDIR)/$(PROGNAME)
 
 #
 # Special source dependencies
