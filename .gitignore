@@ -4,7 +4,5 @@ doc/doxygen/html/*
 install/*
 lib/*
 test/*
-thirdpartylibs/SPARSKIT2/*
 
-*.o
-*.a
+ThirdParty/SPARSKIT2/
