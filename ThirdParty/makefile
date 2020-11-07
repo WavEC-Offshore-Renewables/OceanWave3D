@@ -9,4 +9,4 @@ $(LIBRARY_PACKAGE):
 	$(MAKE) -C $(@D)
 
 clean:
-	rm -r $(dir $(LIBRARY_PACKAGE))
+	-rm -r $(dir $(LIBRARY_PACKAGE))

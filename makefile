@@ -109,18 +109,21 @@ shared: $(OBJECTSBUILDDIR)
 $(THIRDPARTY):
 	$(MAKE) -C $(dir $@)
 
-$(LIBDIR)/%.a: $(THIRDPARTY)
+$(LIBDIR)/%.a: $(THIRDPARTY) $(LIBDIR)
 	ln -s ../$(THIRDPARTY)/$(notdir $@) $(LIBDIR)/
+	
+$(LIBDIR):
+	-@mkdir -p -v $(LIBDIR)
 
 # Compile only - compile all source file to build directory
 compile: $(OBJECTSBUILDDIR)
 
 clean:
 	$(MAKE) -C ThirdParty clean
-	rm $(LIBDIR)/*.a
-	rm $(BUILDDIR)/*.o 
-	rm $(BUILDDIR)/*.mod 
-	rm $(INSTALLDIR)/$(PROGNAME)
+	-rm -r $(LIBDIR)
+	-rm -r $(BUILDDIR)
+	-rm -r $(INSTALLDIR)
+	-rm -r $(LIBINSTALLDIR)
 
 #
 # Special source dependencies
